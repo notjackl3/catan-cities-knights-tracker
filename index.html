@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#15110b" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>Cities &amp; Knights — Improvement Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#15110b;
+    --bg2:#1e1810;
+    --panel:#241d13;
+    --panel2:#2c2418;
+    --line:rgba(212,180,120,.18);
+    --line-strong:rgba(212,180,120,.35);
+    --ink:#f3e9d6;
+    --ink-dim:#b9a986;
+    --ink-faint:#8a7a5c;
+    --gold:#d9b364;
+
+    --trade:#e8b53a;      /* yellow  - cloth   */
+    --trade-deep:#9c7613;
+    --politics:#5b8ff5;   /* blue    - coin    */
+    --politics-deep:#2b4f99;
+    --science:#46c08a;    /* green   - paper   */
+    --science-deep:#1f6b4a;
+
+    --radius:18px;
+    --shadow:0 10px 30px rgba(0,0,0,.45);
+    --safe-top:env(safe-area-inset-top,0px);
+    --safe-bottom:env(safe-area-inset-bottom,0px);
+  }
+
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    background:
+      radial-gradient(1200px 700px at 50% -10%, rgba(217,179,100,.10), transparent 60%),
+      radial-gradient(900px 600px at 90% 110%, rgba(91,143,245,.07), transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    min-height:100dvh;
+    -webkit-font-smoothing:antialiased;
+    overscroll-behavior-y:none;
+  }
+  .wrap{max-width:560px;margin:0 auto;padding:calc(var(--safe-top) + 14px) 16px calc(var(--safe-bottom) + 28px)}
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    display:flex;align-items:center;gap:12px;
+    padding:10px 14px;margin-bottom:18px;
+    background:linear-gradient(180deg,var(--panel2),var(--panel));
+    border:1px solid var(--line);border-radius:16px;
+    box-shadow:var(--shadow);
+    position:sticky;top:calc(var(--safe-top) + 8px);z-index:30;
+    backdrop-filter:blur(8px);
+  }
+  .crest{
+    width:42px;height:42px;border-radius:12px;flex:0 0 auto;
+    display:grid;place-items:center;font-size:22px;
+    background:radial-gradient(circle at 30% 25%, #3a2f1c, #221b10);
+    border:1px solid var(--line-strong);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+  }
+  .topbar .who{flex:1;min-width:0}
+  .topbar .eyebrow{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);font-weight:600}
+  .topbar .name{font-family:'Cinzel',serif;font-weight:600;font-size:18px;line-height:1.15;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .icon-btn{
+    flex:0 0 auto;width:40px;height:40px;border-radius:11px;border:1px solid var(--line);
+    background:var(--panel2);color:var(--ink-dim);font-size:18px;cursor:pointer;
+    display:grid;place-items:center;transition:.15s;
+  }
+  .icon-btn:active{transform:scale(.93);background:var(--panel)}
+
+  /* ---------- titles ---------- */
+  .page-title{font-family:'Cinzel',serif;text-align:center;font-size:26px;font-weight:700;letter-spacing:.02em;margin:4px 0 2px;color:var(--ink)}
+  .page-sub{text-align:center;color:var(--ink-faint);font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:22px}
+
+  /* ---------- login ---------- */
+  .login-card{
+    background:linear-gradient(180deg,var(--panel2),var(--panel));
+    border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px 22px;box-shadow:var(--shadow);margin-top:8px;
+  }
+  .login-card h2{font-family:'Cinzel',serif;font-size:20px;margin:0 0 6px;font-weight:600}
+  .login-card p{color:var(--ink-dim);font-size:13.5px;margin:0 0 18px;line-height:1.5}
+  .field{position:relative;margin-bottom:14px}
+  input[type=text]{
+    width:100%;padding:15px 16px;font-size:16px;border-radius:13px;
+    background:var(--bg2);border:1px solid var(--line-strong);color:var(--ink);
+    font-family:inherit;outline:none;transition:.15s;
+  }
+  input[type=text]:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(217,179,100,.15)}
+  input::placeholder{color:var(--ink-faint)}
+  .btn-primary{
+    width:100%;padding:15px;font-size:15.5px;font-weight:600;letter-spacing:.02em;
+    border:none;border-radius:13px;cursor:pointer;color:#231a07;
+    background:linear-gradient(180deg,#edc878,var(--gold));
+    box-shadow:0 6px 16px rgba(217,179,100,.25);transition:.15s;
+    font-family:inherit;
+  }
+  .btn-primary:active{transform:translateY(1px) scale(.995);filter:brightness(.97)}
+  .btn-ghost{
+    width:100%;padding:13px;font-size:14px;font-weight:500;margin-top:9px;
+    border:1px solid var(--line);border-radius:12px;background:transparent;color:var(--ink-dim);
+    cursor:pointer;font-family:inherit;transition:.15s;
+  }
+  .btn-ghost:active{background:var(--panel)}
+
+  .saved-list{margin-top:20px;border-top:1px solid var(--line);padding-top:16px}
+  .saved-list .lbl{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:10px;font-weight:600}
+  .player-chip{
+    display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+    padding:12px 14px;border-radius:12px;margin-bottom:8px;cursor:pointer;
+    background:var(--bg2);border:1px solid var(--line);color:var(--ink);
+    font-family:inherit;font-size:15px;transition:.15s;
+  }
+  .player-chip:active{transform:scale(.99);border-color:var(--line-strong)}
+  .player-chip .pdot{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-weight:700;font-family:'Cinzel',serif;background:radial-gradient(circle at 30% 25%,#3a2f1c,#221b10);border:1px solid var(--line-strong);color:var(--gold)}
+  .player-chip .pmeta{flex:1;min-width:0}
+  .player-chip .pname{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .player-chip .pstat{font-size:11.5px;color:var(--ink-faint);margin-top:1px}
+  .player-chip .pdel{color:var(--ink-faint);font-size:17px;padding:4px 6px;border-radius:8px}
+
+  /* ---------- discipline cards ---------- */
+  .cards{display:flex;flex-direction:column;gap:16px}
+  .disc{
+    --c:var(--gold);--cd:#000;
+    position:relative;border-radius:var(--radius);overflow:hidden;
+    background:linear-gradient(180deg,var(--panel2),var(--panel));
+    border:1px solid var(--line);box-shadow:var(--shadow);
+  }
+  .disc::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,var(--c),var(--cd))}
+  .disc-head{display:flex;align-items:center;gap:13px;padding:16px 16px 12px 20px}
+  .disc-emoji{
+    width:46px;height:46px;flex:0 0 auto;border-radius:13px;display:grid;place-items:center;font-size:24px;
+    background:color-mix(in srgb,var(--c) 18%, transparent);
+    border:1px solid color-mix(in srgb,var(--c) 40%, transparent);
+  }
+  .disc-titles{flex:1;min-width:0}
+  .disc-name{font-family:'Cinzel',serif;font-weight:600;font-size:18px;line-height:1.1}
+  .disc-sub{font-size:11.5px;color:var(--ink-faint);letter-spacing:.06em;margin-top:2px}
+  .disc-sub b{color:color-mix(in srgb,var(--c) 70%, var(--ink-dim));font-weight:600}
+  .lvl-badge{
+    flex:0 0 auto;text-align:center;min-width:54px;padding:6px 4px;border-radius:12px;
+    background:color-mix(in srgb,var(--c) 14%, transparent);
+    border:1px solid color-mix(in srgb,var(--c) 35%, transparent);
+  }
+  .lvl-badge .n{font-family:'Cinzel',serif;font-weight:700;font-size:24px;line-height:1;color:var(--c)}
+  .lvl-badge .l{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-top:2px}
+
+  /* ladder */
+  .ladder{display:flex;gap:6px;padding:2px 18px 14px}
+  .rung{
+    flex:1;height:34px;border-radius:8px;position:relative;cursor:pointer;
+    background:var(--bg2);border:1px solid var(--line);
+    display:grid;place-items:center;font-weight:700;font-size:13px;color:var(--ink-faint);
+    transition:.18s;font-family:'Cinzel',serif;
+  }
+  .rung.on{
+    color:#1a1305;border-color:transparent;
+    background:linear-gradient(180deg,var(--c),var(--cd));
+    box-shadow:0 3px 10px color-mix(in srgb,var(--c) 35%, transparent);
+  }
+  .rung.met{outline:2px solid var(--gold);outline-offset:1px}
+  .rung:active{transform:scale(.92)}
+
+  /* ability row */
+  .ability{
+    margin:0 18px 14px;padding:11px 13px;border-radius:12px;min-height:44px;
+    background:var(--bg2);border:1px solid var(--line);
+    display:flex;gap:10px;align-items:flex-start;
+  }
+  .ability .ico{font-size:16px;line-height:1.3;flex:0 0 auto}
+  .ability .txt{font-size:12.5px;line-height:1.45;color:var(--ink-dim)}
+  .ability .txt b{color:color-mix(in srgb,var(--c) 75%, var(--ink));font-weight:700}
+  .ability.empty .txt{color:var(--ink-faint)}
+
+  /* controls */
+  .controls{display:flex;align-items:center;gap:12px;padding:0 18px 18px}
+  .step{
+    flex:1;height:50px;border-radius:13px;border:1px solid var(--line-strong);
+    background:var(--panel2);color:var(--ink);font-size:24px;font-weight:600;cursor:pointer;
+    display:grid;place-items:center;transition:.13s;font-family:inherit;user-select:none;
+  }
+  .step:active{transform:scale(.95);background:var(--panel)}
+  .step.plus{
+    border-color:color-mix(in srgb,var(--c) 45%, transparent);
+    background:color-mix(in srgb,var(--c) 16%, var(--panel2));color:var(--c);
+  }
+  .step:disabled{opacity:.32;cursor:not-allowed;transform:none}
+  .cost-pill{
+    flex:0 0 auto;min-width:96px;text-align:center;padding:8px 10px;border-radius:12px;
+    background:var(--bg2);border:1px dashed var(--line-strong);
+  }
+  .cost-pill .top{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)}
+  .cost-pill .val{font-size:14px;font-weight:700;margin-top:2px;color:var(--ink)}
+  .cost-pill .val.maxed{color:var(--gold);font-family:'Cinzel',serif}
+
+  .met-toggle{
+    margin:0 18px 18px;width:calc(100% - 36px);padding:11px;border-radius:12px;cursor:pointer;
+    font-family:'Cinzel',serif;font-weight:600;font-size:13px;letter-spacing:.04em;
+    border:1px solid var(--gold);background:transparent;color:var(--gold);transition:.15s;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .met-toggle.claimed{background:linear-gradient(180deg,#edc878,var(--gold));color:#231a07;border-color:transparent}
+  .met-toggle:active{transform:scale(.99)}
+
+  /* summary */
+  .summary{
+    margin-top:18px;padding:16px 18px;border-radius:var(--radius);
+    background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);
+  }
+  .summary .s-label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);font-weight:600}
+  .summary .s-main{font-family:'Cinzel',serif;font-size:15px;margin-top:3px}
+  .summary .s-vp{text-align:right}
+  .summary .s-vp .big{font-family:'Cinzel',serif;font-size:26px;font-weight:700;color:var(--gold);line-height:1}
+  .summary .s-vp .cap{font-size:10.5px;color:var(--ink-faint);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+
+  .footnote{text-align:center;color:var(--ink-faint);font-size:11px;line-height:1.6;margin-top:20px;padding:0 8px}
+
+  /* sheet (switch player) */
+  .scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);z-index:50;opacity:0;pointer-events:none;transition:.2s}
+  .scrim.show{opacity:1;pointer-events:auto}
+  .sheet{
+    position:fixed;left:0;right:0;bottom:0;z-index:60;
+    max-width:560px;margin:0 auto;
+    background:var(--panel);border:1px solid var(--line);border-bottom:none;
+    border-radius:22px 22px 0 0;padding:8px 18px calc(var(--safe-bottom) + 22px);
+    transform:translateY(110%);transition:transform .26s cubic-bezier(.3,.9,.3,1);
+    box-shadow:0 -10px 40px rgba(0,0,0,.5);
+  }
+  .sheet.show{transform:translateY(0)}
+  .grab{width:40px;height:4px;border-radius:99px;background:var(--line-strong);margin:8px auto 14px}
+  .sheet h3{font-family:'Cinzel',serif;font-size:17px;margin:0 0 14px;font-weight:600}
+
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ LOGIN ============ -->
+  <section id="loginView">
+    <div class="crest" style="width:58px;height:58px;font-size:30px;margin:14px auto 0">🏰</div>
+    <h1 class="page-title">Cities &amp; Knights</h1>
+    <div class="page-sub">City Improvement Tracker</div>
+
+    <div class="login-card">
+      <h2>Who's playing?</h2>
+      <p>Enter your name to start your own tracker. Each player's progress is saved on this device — share the phone, or open it on your own.</p>
+      <div class="field">
+        <input type="text" id="nameInput" placeholder="Your name…" autocomplete="off" autocapitalize="words" maxlength="22" />
+      </div>
+      <button class="btn-primary" id="startBtn">Start Tracking</button>
+
+      <div class="saved-list hidden" id="savedList">
+        <div class="lbl">Continue as</div>
+        <div id="savedPlayers"></div>
+      </div>
+    </div>
+    <div class="footnote">Three improvements: <b style="color:var(--trade)">Trade</b>, <b style="color:var(--politics)">Politics</b>, <b style="color:var(--science)">Science</b>. Reach level 4 to claim a Metropolis.</div>
+  </section>
+
+  <!-- ============ TRACKER ============ -->
+  <section id="trackerView" class="hidden">
+    <div class="topbar">
+      <div class="crest" id="topCrest">⚔️</div>
+      <div class="who">
+        <div class="eyebrow">Tracking</div>
+        <div class="name" id="topName">Player</div>
+      </div>
+      <button class="icon-btn" id="switchBtn" title="Switch player">⇄</button>
+    </div>
+
+    <div class="cards" id="cards"><!-- injected --></div>
+
+    <div class="summary">
+      <div>
+        <div class="s-label">City Improvements</div>
+        <div class="s-main" id="sumLevels">0 levels built</div>
+      </div>
+      <div class="s-vp">
+        <div class="big" id="sumVP">0</div>
+        <div class="cap">Metropolis VP</div>
+      </div>
+    </div>
+
+    <div class="footnote">
+      Each level costs that many commodities of the matching type (Cloth · Coin · Paper).<br/>
+      Tap a rung to jump, or use − / + . A Metropolis is worth 4 VP (a city is 2) — only one per discipline, held by the highest builder.
+    </div>
+  </section>
+</div>
+
+<!-- switch-player sheet -->
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet">
+  <div class="grab"></div>
+  <h3>Players on this device</h3>
+  <div id="sheetPlayers"></div>
+  <button class="btn-ghost" id="addPlayerBtn" style="margin-top:6px">＋ Add a new player</button>
+  <button class="btn-ghost" id="logoutBtn">Back to login</button>
+</div>
+
+<script>
+"use strict";
+
+/* ---------- game data (names & abilities per the C&K board) ---------- */
+const DISCIPLINES = [
+  {
+    key:"science", name:"Science", emoji:"📜", color:"var(--science)", deep:"var(--science-deep)",
+    commodity:"Paper",
+    levels:[
+      {name:"School"},
+      {name:"Library"},
+      {name:"Aqueduct", ico:"💧", html:"<b>Aqueduct</b> — if you receive no production on a roll, take 1 resource of your choice (except on a 7)."},
+      {name:"Theater"},
+      {name:"University"}
+    ]
+  },
+  {
+    key:"trade", name:"Trade", emoji:"🧶", color:"var(--trade)", deep:"var(--trade-deep)",
+    commodity:"Cloth",
+    levels:[
+      {name:"Market"},
+      {name:"Trading House", ico:"🤝", html:"<b>Trading House</b> — trade any 2 identical commodities for any 1 other commodity or resource."},
+      {name:"Merchant Guild"},
+      {name:"Bank"},
+      {name:"Great Exchange"}
+    ]
+  },
+  {
+    key:"politics", name:"Politics", emoji:"🪙", color:"var(--politics)", deep:"var(--politics-deep)",
+    commodity:"Coin",
+    levels:[
+      {name:"Town Hall"},
+      {name:"Embassy"},
+      {name:"Fortress", ico:"🏯", html:"<b>Fortress</b> — you may promote Strong Knights (level 2) to Mighty Knights (level 3)."},
+      {name:"Courthouse"},
+      {name:"High Assembly"}
+    ]
+  }
+];
+const MAX = 5;
+const METRO_LEVEL = 4;
+
+/* ---------- storage ---------- */
+const STORE_KEY = "cnk-tracker-v1";
+function load(){
+  try{ return JSON.parse(localStorage.getItem(STORE_KEY)) || {players:{},current:null}; }
+  catch(e){ return {players:{},current:null}; }
+}
+function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){} }
+let state = load();
+
+function blankPlayer(){
+  return {trade:0,politics:0,science:0,metro:{trade:false,politics:false,science:false}};
+}
+function ensure(name){
+  if(!state.players[name]) state.players[name]=blankPlayer();
+  // migrate older shapes
+  const p=state.players[name];
+  if(!p.metro) p.metro={trade:false,politics:false,science:false};
+  return p;
+}
+
+/* ---------- elements ---------- */
+const $ = id=>document.getElementById(id);
+const loginView=$("loginView"), trackerView=$("trackerView");
+
+/* ---------- login ---------- */
+function renderSaved(){
+  const names=Object.keys(state.players);
+  const box=$("savedList"), list=$("savedPlayers");
+  if(names.length===0){ box.classList.add("hidden"); return; }
+  box.classList.remove("hidden");
+  list.innerHTML="";
+  names.forEach(name=>{
+    const p=state.players[name];
+    const lv=p.trade+p.politics+p.science;
+    const row=document.createElement("button");
+    row.className="player-chip";
+    row.innerHTML=`
+      <span class="pdot">${initial(name)}</span>
+      <span class="pmeta">
+        <span class="pname">${esc(name)}</span>
+        <span class="pstat">${lv} levels · T${p.trade} P${p.politics} S${p.science}</span>
+      </span>
+      <span class="pdel" data-del="${esc(name)}">✕</span>`;
+    row.addEventListener("click",e=>{
+      if(e.target.dataset.del!==undefined){
+        e.stopPropagation();
+        if(confirm(`Delete ${name}'s tracker?`)){ delete state.players[name]; save(); renderSaved(); }
+        return;
+      }
+      login(name);
+    });
+    list.appendChild(row);
+  });
+}
+function login(name){
+  name=name.trim();
+  if(!name) return;
+  ensure(name);
+  state.current=name;
+  save();
+  showTracker();
+}
+$("startBtn").addEventListener("click",()=>{ login($("nameInput").value); $("nameInput").value=""; });
+$("nameInput").addEventListener("keydown",e=>{ if(e.key==="Enter") $("startBtn").click(); });
+
+/* ---------- tracker render ---------- */
+function showLogin(){
+  trackerView.classList.add("hidden");
+  loginView.classList.remove("hidden");
+  renderSaved();
+  closeSheet();
+}
+function showTracker(){
+  loginView.classList.add("hidden");
+  trackerView.classList.remove("hidden");
+  renderTracker();
+}
+function renderTracker(){
+  const name=state.current;
+  const p=ensure(name);
+  $("topName").textContent=name;
+  $("topCrest").textContent=initial(name);
+
+  const cards=$("cards");
+  cards.innerHTML="";
+  DISCIPLINES.forEach(d=>cards.appendChild(buildCard(d,p)));
+
+  const total=p.trade+p.politics+p.science;
+  $("sumLevels").textContent=`${total} level${total===1?"":"s"} built`;
+  const metros=(p.metro.trade?1:0)+(p.metro.politics?1:0)+(p.metro.science?1:0);
+  $("sumVP").textContent=String(metros*2);
+  save();
+}
+
+function buildCard(d,p){
+  const lvl=p[d.key];
+  const el=document.createElement("div");
+  el.className="disc";
+  el.style.setProperty("--c",d.color);
+  el.style.setProperty("--cd",d.deep);
+
+  // ladder
+  let rungs="";
+  for(let i=1;i<=MAX;i++){
+    const on=i<=lvl?"on":"";
+    const met=(i===METRO_LEVEL && p.metro[d.key])?"met":"";
+    rungs+=`<div class="rung ${on} ${met}" data-set="${i}" title="${esc(d.levels[i-1].name)}">${i}</div>`;
+  }
+
+  // ability for current level
+  let abilityHTML;
+  if(lvl===0){
+    abilityHTML=`<div class="ability empty"><span class="ico">○</span><span class="txt">Not built yet — first level <b>${d.levels[0].name}</b> costs 1 ${d.commodity}.</span></div>`;
+  }else{
+    const lv=d.levels[lvl-1];
+    const html = lv.html ? lv.html : `<b>${lv.name}</b> (Lv ${lvl}) — improves your odds of drawing ${d.name} progress cards.`;
+    const ico = lv.ico || "🎴";
+    abilityHTML=`<div class="ability"><span class="ico">${ico}</span><span class="txt">${html}</span></div>`;
+  }
+
+  // cost / metropolis
+  const next=lvl+1;
+  const costHTML = lvl>=MAX
+    ? `<div class="cost-pill"><div class="top">Maxed</div><div class="val maxed">★ Lv 5</div></div>`
+    : `<div class="cost-pill"><div class="top">${esc(d.levels[next-1].name)}</div><div class="val">${next} ${d.commodity}</div></div>`;
+
+  const metroBtn = lvl>=METRO_LEVEL
+    ? `<button class="met-toggle ${p.metro[d.key]?"claimed":""}" data-metro>🏛️ ${p.metro[d.key]?"Metropolis claimed (4 VP)":"Claim Metropolis"}</button>`
+    : "";
+
+  el.innerHTML=`
+    <div class="disc-head">
+      <div class="disc-emoji">${d.emoji}</div>
+      <div class="disc-titles">
+        <div class="disc-name">${d.name}</div>
+        <div class="disc-sub">Commodity: <b>${d.commodity}</b></div>
+      </div>
+      <div class="lvl-badge"><div class="n">${lvl}</div><div class="l">Level</div></div>
+    </div>
+    <div class="ladder">${rungs}</div>
+    ${abilityHTML}
+    <div class="controls">
+      <button class="step minus" data-dec ${lvl<=0?"disabled":""}>−</button>
+      ${costHTML}
+      <button class="step plus" data-inc ${lvl>=MAX?"disabled":""}>+</button>
+    </div>
+    ${metroBtn}
+  `;
+
+  // events
+  el.querySelectorAll(".rung").forEach(r=>{
+    r.addEventListener("click",()=>setLevel(d.key,parseInt(r.dataset.set,10)));
+  });
+  el.querySelector("[data-inc]")?.addEventListener("click",()=>setLevel(d.key,lvl+1));
+  el.querySelector("[data-dec]")?.addEventListener("click",()=>setLevel(d.key,lvl-1));
+  el.querySelector("[data-metro]")?.addEventListener("click",()=>{
+    p.metro[d.key]=!p.metro[d.key]; renderTracker();
+  });
+  return el;
+}
+
+function setLevel(key,val){
+  const p=ensure(state.current);
+  val=Math.max(0,Math.min(MAX,val));
+  // tapping the current top rung toggles it off (down one)
+  if(val===p[key]) val=val-1<0?0:val; // no-op safety
+  p[key]=val;
+  if(val<METRO_LEVEL) p.metro[key]=false; // can't hold metropolis below lvl 4
+  renderTracker();
+  if(navigator.vibrate) navigator.vibrate(8);
+}
+
+/* ---------- switch-player sheet ---------- */
+function openSheet(){
+  const list=$("sheetPlayers"); list.innerHTML="";
+  Object.keys(state.players).forEach(name=>{
+    const p=state.players[name];
+    const lv=p.trade+p.politics+p.science;
+    const row=document.createElement("button");
+    row.className="player-chip";
+    const isCur=name===state.current;
+    row.innerHTML=`
+      <span class="pdot">${initial(name)}</span>
+      <span class="pmeta"><span class="pname">${esc(name)}${isCur?' ·':''}</span>
+      <span class="pstat">${isCur?"current · ":""}${lv} levels</span></span>
+      ${isCur?'<span style="color:var(--gold)">●</span>':''}`;
+    row.addEventListener("click",()=>{ state.current=name; save(); closeSheet(); renderTracker(); });
+    list.appendChild(row);
+  });
+  $("scrim").classList.add("show");
+  $("sheet").classList.add("show");
+}
+function closeSheet(){ $("scrim").classList.remove("show"); $("sheet").classList.remove("show"); }
+$("switchBtn").addEventListener("click",openSheet);
+$("scrim").addEventListener("click",closeSheet);
+$("addPlayerBtn").addEventListener("click",()=>{
+  const n=prompt("New player's name:");
+  if(n && n.trim()){ login(n.trim()); }
+});
+$("logoutBtn").addEventListener("click",()=>{ state.current=null; save(); showLogin(); });
+
+/* ---------- helpers ---------- */
+function initial(n){ return (n.trim()[0]||"?").toUpperCase(); }
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+/* ---------- boot ---------- */
+if(state.current && state.players[state.current]){ showTracker(); }
+else { showLogin(); }
+</script>
+</body>
+</html>
